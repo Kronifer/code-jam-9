@@ -2,7 +2,8 @@ import asyncio
 import json
 
 import websockets
-from connections import Connections
+
+from .connections import Connections
 
 CONNECTIONS = Connections()
 
@@ -54,19 +55,14 @@ async def send_user_count_event() -> None:
     while True:
         user_count = CONNECTIONS.user_count
         if user_count != len(CONNECTIONS):
-            # A user joined
-            if user_count < len(CONNECTIONS):
-                websockets.broadcast(
-                    CONNECTIONS.data.values(),
-                    f'{{"event": "user_join", "count": {user_count}, "uname": "{CONNECTIONS.newest_user}"}}',
-                )
-            # A user left
-            else:
-                websockets.broadcast(
-                    CONNECTIONS.data.values(),
-                    f'{{"event": "user_leave", "count": {user_count}, "uname": "{CONNECTIONS.latest_departed_user}"}}',
-                )
-
+            # There should be an extra user if one has joined, and a missing
+            # one if one has left
+            current_users = CONNECTIONS.current_users
+            event_type = "user_join" if user_count < len(CONNECTIONS) else "user_leave"
+            websockets.broadcast(
+                CONNECTIONS.data.values(),
+                f'{{"event": "{event_type}", "count": {user_count}, "uname": "{current_users}"}}',
+            )
             CONNECTIONS.update_user_count()
         await asyncio.sleep(1)
 

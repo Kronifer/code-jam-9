@@ -14,7 +14,6 @@ class Connections:
         """Initialize class"""
         self.data = {} if data is None else data
         self._user_limit = user_limit
-        self._latest_departed_user = self._newest_user = None
 
     def __len__(self) -> int:
         """Returns number of current users"""
@@ -53,24 +52,9 @@ class Connections:
         self._user_count = len(self)
 
     @property
-    def latest_departed_user(self) -> None | str:
-        """
-        Latest departed user property
-
-        Returns username of most recently departed user, None if no one has
-        left yet
-        """
-        return self._last_departed_user
-
-    @property
-    def newest_user(self) -> None | str:
-        """
-        Newest user property
-
-        Returns username of most recently joined user,
-        None if no one has joined yet
-        """
-        return self._newest_user
+    def current_users(self) -> str:
+        """Return string of current usernames, formatted for JSON transmission"""
+        return str(list(self.data.keys())).replace("'", '"')
 
     def has_user(self, uname: str) -> bool:
         """Determines whether a username is in use"""
@@ -92,7 +76,6 @@ class Connections:
         if self.has_user(uname) and require_unique:
             raise KeyError(f"username {uname} already in use")
         self.data[uname] = value
-        self._newest_user = uname
         return self
 
     def remove_user(
@@ -106,7 +89,6 @@ class Connections:
         """
         if self.has_user(uname):
             del self.data[uname]
-            self._last_departed_user = uname
         elif raise_error:
             raise KeyError(f"No user named {uname}")
         return self
