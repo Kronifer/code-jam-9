@@ -6,7 +6,6 @@ import websockets
 CONNECTIONS = {}
 USER_COUNT = len(CONNECTIONS)
 USER_LIMIT = int()
-LAST_USER = str()
 
 
 async def request_uname(ws):
@@ -60,15 +59,17 @@ async def send_user_count_event():
     while True:
         if USER_COUNT < len(CONNECTIONS):
             USER_COUNT = len(CONNECTIONS)
+            ulist = str(list(CONNECTIONS.keys())).replace("'", '"')
             websockets.broadcast(
                 CONNECTIONS.values(),
-                f'{{"event": "user_join", "count": {USER_COUNT}, "uname": "{list(CONNECTIONS.keys())[-1]}"}}',
+                f'{{"event": "user_join", "count": {USER_COUNT}, "uname_list": {ulist}}}',
             )
         elif USER_COUNT > len(CONNECTIONS):
             USER_COUNT = len(CONNECTIONS)
+            ulist = str(list(CONNECTIONS.keys())).replace("'", '"')
             websockets.broadcast(
                 CONNECTIONS.values(),
-                f'{{"event": "user_leave", "count": {USER_COUNT}, "uname": "{LAST_USER}"}}',
+                f'{{"event": "user_leave", "count": {USER_COUNT}, "uname_list": {ulist}}}',
             )
         await asyncio.sleep(1)
 
