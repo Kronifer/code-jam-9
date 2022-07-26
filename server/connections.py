@@ -20,6 +20,14 @@ class Connections:
         """Returns number of current users"""
         return len(self.data)
 
+    def __str__(self) -> str:
+        """Returns string representation of class dict"""
+        return str(self.data)
+
+    def __repr__(self) -> str:
+        """Returns string representation of class dict"""
+        return str(self)
+
     @property
     def user_limit(self) -> None | int:
         """Returns current user limit"""
