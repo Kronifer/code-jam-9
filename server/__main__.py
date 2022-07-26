@@ -23,13 +23,13 @@ async def send_user_count_event():
         if USER_COUNT < len(CONNECTIONS):
             USER_COUNT = len(CONNECTIONS)
             websockets.broadcast(
-                CONNECTIONS, f'{{"event": "user_join", "count": {USER_COUNT}}}'
-            )
+                CONNECTIONS,
+                f'{{"event": "user_join", "count": {USER_COUNT}}}')
         elif USER_COUNT > len(CONNECTIONS):
             USER_COUNT = len(CONNECTIONS)
             websockets.broadcast(
-                CONNECTIONS, f'{{"event": "user_leave", "count": {USER_COUNT}}}'
-            )
+                CONNECTIONS,
+                f'{{"event": "user_leave", "count": {USER_COUNT}}}')
         await asyncio.sleep(1)
 
 
