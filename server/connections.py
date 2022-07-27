@@ -86,8 +86,7 @@ class Connections(Generic[T]):
         """
         User deletion method
 
-        Deletes user by name, optionally raising an error if no user has_user
-        has that name. Records username in `last_departed_user`.
+        Deletes user by name, optionally raising an error if no user has that username.
         """
         if self.has_user(uname):
             del self.data[uname]
