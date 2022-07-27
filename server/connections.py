@@ -1,7 +1,11 @@
-from websockets import WebsocketsCommonProtocol
+from typing import Generic, TypeVar
+
+from websockets import WebSocketCommonProtocol
+
+T = TypeVar("T")
 
 
-class Connections:
+class Connections(Generic[T]):
     """
     Class for managing WebsocketsCommonProtocol instances
 
@@ -14,6 +18,7 @@ class Connections:
         """Initialize class"""
         self.data = {} if data is None else data
         self._user_limit = user_limit
+        self._user_count = 0
 
     def __len__(self) -> int:
         """Returns number of current users"""
@@ -63,24 +68,21 @@ class Connections:
     def add_user(
         self,
         uname: str,
-        value: WebsocketsCommonProtocol,
+        value: WebSocketCommonProtocol,
         require_unique=False,
-    ) -> None | "Connections":
+    ) -> None | T:
         """
         Method to add new user with a given username
 
         Adds a username-WebsocketsCommonProtocol pair to class dict,
         optionally raising an error instead of overwriting an existing user.
-        Records username in `newes_user` on success
         """
         if self.has_user(uname) and require_unique:
             raise KeyError(f"username {uname} already in use")
         self.data[uname] = value
-        return self
+        return self.data
 
-    def remove_user(
-        self, uname: str, raise_error: bool = False
-    ) -> None | "Connections":
+    def remove_user(self, uname: str, raise_error: bool = False) -> None | T:
         """
         User deletion method
 

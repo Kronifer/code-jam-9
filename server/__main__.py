@@ -36,10 +36,14 @@ async def connect(ws) -> None:
     Prompts for a username after checking
     if more users can join, then waits to remove the user when they user_leave
     """
-    if len(CONNECTIONS) >= CONNECTIONS.user_limit:
-        await ws.send('{"error": "user limit has been reached"}')
-        await ws.close()
-        return
+    try:
+        if len(CONNECTIONS) >= CONNECTIONS.user_limit:
+            await ws.send('{"error": "user limit has been reached"}')
+            await ws.close()
+            return
+    # user_limit has not been assigned a value yet
+    except TypeError:
+        pass
     uname = await request_uname(ws)
     # This property is initialized to None, so this reliably checks if it has to be requested
     if CONNECTIONS.user_limit is None:
@@ -57,11 +61,12 @@ async def send_user_count_event() -> None:
         if user_count != len(CONNECTIONS):
             # There should be an extra user if one has joined, and a missing
             # one if one has left
+            user_count = len(CONNECTIONS)
             current_users = CONNECTIONS.current_users
             event_type = "user_join" if user_count < len(CONNECTIONS) else "user_leave"
             websockets.broadcast(
                 CONNECTIONS.data.values(),
-                f'{{"event": "{event_type}", "count": {user_count}, "uname": "{current_users}"}}',
+                f'{{"event": "{event_type}", "count": {user_count}, "uname_list": {current_users}}}',
             )
             CONNECTIONS.update_user_count()
         await asyncio.sleep(1)
