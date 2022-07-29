@@ -75,7 +75,7 @@ async def send_user_count_event() -> None:
 
 async def main():
     """Runs the websockets server."""
-    result =  find_free_port(connect)
+    result = find_free_port(connect)
     port = await result
     print(f"Starting server in port {port}")
     async with websockets.serve(connect, "localhost", port):

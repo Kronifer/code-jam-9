@@ -1,8 +1,9 @@
 import websockets
 
-async def find_free_port(coroutine, port = 8081):
+
+async def find_free_port(coroutine, port=8081):
     """
-    Find a free port 
+    Find a free port
 
     Given a port number, checks it and each subsequent number, returning the
     first that is not in use.
@@ -15,9 +16,9 @@ async def find_free_port(coroutine, port = 8081):
                 pass
             return port
         # Catch only the specific error from trying to open a port in use
-        except OSError as e: 
+        except OSError as e:
             if e.errno == port_in_use_err:
                 port += 1
-            else: 
+            else:
                 raise e
     # Return None in near-impossible case of no free ports
