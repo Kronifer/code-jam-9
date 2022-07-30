@@ -125,7 +125,7 @@
         }, 
         {
         
-            "question_type": "multipl_choice",
+            "question_type": "multiple_choice",
             "traceback": "x[1:2] = 4",
             "code": "TypeError: can only assign an iterable",
             "question": "What change would cause this line to replace x's second and third elements with 2?",
